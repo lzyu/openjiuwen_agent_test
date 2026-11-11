@@ -1,0 +1,892 @@
+{
+  "tested_at": "2026-11-11T12:48:44.316564+08:00",
+  "model": "deepseek-flash",
+  "mode": "real LLM + real marketplace",
+  "cases": [
+    {
+      "id": "email",
+      "query": "我们公司20人，找SaaS企业邮箱，必须支持试用，列表展示价500元以内，推荐2款。能保证20人全年总价吗？",
+      "delivery": "SaaS",
+      "trial": true,
+      "max_price": 500,
+      "elapsed_seconds": 10.28,
+      "output": "## 查询结果：当前严格条件下仅有 1 款符合要求\n\n已按「企业邮箱 + SaaS + 支持试用 + 列表展示价 ≤500 元」实时检索（另用同义关键词「邮箱」复检一次），返回结果去重后只有 **1 款**，不足 2 款，以下如实说明：\n\n| 商品 | 商家 | 交付 | 列表展示价 | 试用 |\n|---|---|---|---|---|\n| [Coremail云享版企业邮箱](https://marketplace.huaweicloud.com/contents/e8b74ffa-023f-41cf-8708-7a2be247abdb) | 论客科技（广州）有限公司 | SaaS | ￥180/年 | 支持，￥0.00/试用15天 |\n\n**适配理由（来自商品信息）**：名称、简介和标签均含“企业邮箱”，交付方式为 SaaS，列表标注支持试用，展示价 180 元 ≤ 500 元。\n**待核验**：180 元/年 的计费单位（是按账号、按用户还是按规格）、20 个账号如何下单、试用是否含全部功能、空间容量与到期后数据迁移方式。\n\n## 关于「20 人全年总价」\n\n**不能保证。** 工具返回的是搜索列表展示价，价格可能按用户、次数、资源或规格计费，无法从单一展示价推算 20 人 × 1 年的整套费用，也不代表您公司的实际成交价。若 180 元为“每账号/年”，20 人年费约 3,600 元；但这一单位本身未经确认，**必须到详情页查看规格或让商家出具 20 账号报价单**后才能作预算依据。\n\n## 如需凑齐 2 款，请选择放宽哪一项\n\n1. 提高列表展示价上限（如 1,500 元）；\n2. 取消“必须支持试用”；\n3. 扩大到本地部署的镜像、License 邮箱产品。\n\n您希望先放宽哪一条？另外，能否告知 20 人的邮箱大致容量需求（如每人 5GB 或 10GB）？这样我下次可更精准筛选。",
+      "checks": {
+        "passed": true,
+        "errors": [],
+        "product_count": 1,
+        "grounded_url_count": 1
+      },
+      "trace": [
+        {
+          "event": "tool_call",
+          "name": "skill_tool"
+        },
+        {
+          "event": "skill_loaded",
+          "name": "marketplace-recommendation"
+        },
+        {
+          "event": "tool_call",
+          "name": "recommend_products"
+        },
+        {
+          "event": "recommendation",
+          "result": {
+            "status": "ok",
+            "keyword": "企业邮箱",
+            "products": [
+              {
+                "id": "e8b74ffa-023f-41cf-8708-7a2be247abdb",
+                "name": "Coremail云享版企业邮箱",
+                "seller": "论客科技（广州）有限公司",
+                "description": "专为各行业客户打造的高端企业邮箱，华为云专业托管，稳定可靠、功能全面、性能领先、极致安全，助力客户构建高效协同办公平台，成就数字化转型。",
+                "url": "https://marketplace.huaweicloud.com/contents/e8b74ffa-023f-41cf-8708-7a2be247abdb",
+                "delivery": "SaaS",
+                "price": 180.0,
+                "price_display": "￥180/年",
+                "trial": true,
+                "trial_price_display": "￥0.00/试用15天",
+                "rating": 5.0,
+                "sales": 2055.0,
+                "tags": [
+                  "金融",
+                  "教育"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：企业邮箱",
+                  "交付方式为 SaaS",
+                  "列表标注支持试用；试用是否免费需查看试用规格",
+                  "列表展示价格 180 元 ≤ 500 元（非总价核算）"
+                ]
+              }
+            ],
+            "upstream_total": 42,
+            "candidates_checked": 40,
+            "matches_in_candidates": 1,
+            "fetched_at": "2026-11-11T04:48:48.448029+00:00",
+            "source": "https://marketplace.huaweicloud.com/search/",
+            "request": {
+              "flow_id": "101000",
+              "keyword": "企业邮箱",
+              "limit": 40,
+              "offset": 0,
+              "filter": {
+                "content_mode": 5,
+                "price_end": 500,
+                "is_trial": 1
+              }
+            },
+            "price_note": "价格是云商店搜索列表展示价，可能按用户、次数、资源或规格计费；不能据此保证整套方案或多人总预算。最终以详情页规格和商家报价为准。",
+            "scope_note": "仅核验当前返回的前 40 个候选；无匹配不代表全站无货。可简化关键词或经用户同意放宽条件。"
+          }
+        },
+        {
+          "event": "tool_call",
+          "name": "recommend_products"
+        },
+        {
+          "event": "recommendation",
+          "result": {
+            "status": "ok",
+            "keyword": "邮箱",
+            "products": [
+              {
+                "id": "e8b74ffa-023f-41cf-8708-7a2be247abdb",
+                "name": "Coremail云享版企业邮箱",
+                "seller": "论客科技（广州）有限公司",
+                "description": "专为各行业客户打造的高端企业邮箱，华为云专业托管，稳定可靠、功能全面、性能领先、极致安全，助力客户构建高效协同办公平台，成就数字化转型。",
+                "url": "https://marketplace.huaweicloud.com/contents/e8b74ffa-023f-41cf-8708-7a2be247abdb",
+                "delivery": "SaaS",
+                "price": 180.0,
+                "price_display": "￥180/年",
+                "trial": true,
+                "trial_price_display": "￥0.00/试用15天",
+                "rating": 5.0,
+                "sales": 2055.0,
+                "tags": [
+                  "金融",
+                  "教育"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：邮箱",
+                  "交付方式为 SaaS",
+                  "列表标注支持试用；试用是否免费需查看试用规格",
+                  "列表展示价格 180 元 ≤ 500 元（非总价核算）"
+                ]
+              }
+            ],
+            "upstream_total": 1,
+            "candidates_checked": 1,
+            "matches_in_candidates": 1,
+            "fetched_at": "2026-11-11T04:48:50.758686+00:00",
+            "source": "https://marketplace.huaweicloud.com/search/",
+            "request": {
+              "flow_id": "101000",
+              "keyword": "邮箱",
+              "limit": 40,
+              "offset": 0,
+              "filter": {
+                "content_mode": 5,
+                "price_end": 500,
+                "is_trial": 1
+              }
+            },
+            "price_note": "价格是云商店搜索列表展示价，可能按用户、次数、资源或规格计费；不能据此保证整套方案或多人总预算。最终以详情页规格和商家报价为准。",
+            "scope_note": "仅核验当前返回的前 40 个候选；无匹配不代表全站无货。可简化关键词或经用户同意放宽条件。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "crm",
+      "query": "给10人销售团队推荐2款SaaS CRM客户管理商品，比较用途、价格单位、试用情况。",
+      "delivery": "SaaS",
+      "elapsed_seconds": 11.86,
+      "output": "已加载选型技能，并按「CRM / 客户管理 + SaaS」在云商店实时检索（仅核验了当前返回的前 40 个候选，不代表全站结论）。以下 2 款最适合 10 人销售团队的客户管理需求：\n\n| 商品 | 商家 | 用途定位 | 价格单位（列表展示价） | 试用 |\n|---|---|---|---|---|\n| [客户跟进](https://marketplace.huaweicloud.com/contents/febbca31-4e9b-4adb-826d-e6567e8d991b) | 河北银合科技有限公司 | 从线索到签约回款的全流程客户跟进，记录沟通细节、设置下次沟通提醒，避免客户信息丢失 | ￥100/月 | 支持，￥0.00/试用3天 |\n| [合力亿捷云客服](https://marketplace.huaweicloud.com/contents/e54ba03a-1d85-4dac-b8b3-301cd834cb39) | 北京合力亿捷科技股份有限公司 | 客户数据统一管理（支持导入、识别来源轨迹、评估渠道效果），叠加在线客服/联络中心能力 | ￥1800/年 | 不支持试用 |\n\n**选择建议**\n- 想要轻量、直接管销售漏斗且先试用验证：优先**客户跟进**，10 人团队上手成本低，3 天试用可先跑真实线索流程。\n- 需要统一客户数据、同时管售前售后咨询（电话/在线触点）：看**合力亿捷云客服**，但需先与商家确认无试用情况下如何验证版本能力。\n\n**待核验（列表价不等于整套预算）**\n- 两款的价格单位均未标明按账号/坐席还是按版本，10 人团队的实际费用与所需规格需在详情页或向商家核验。\n- 客户跟进需确认 3 天试用后的版本、数据量限制；云客服需确认是否按坐席数计费、客户管理模块是否含在 1800 元/年版本内。\n\n可否补充两点，我帮你进一步缩小范围：①预算口径是按人/月还是全年总额？②是否需要与企微/电话呼叫或现有 ERP 打通？",
+      "checks": {
+        "passed": true,
+        "errors": [],
+        "product_count": 8,
+        "grounded_url_count": 2
+      },
+      "trace": [
+        {
+          "event": "tool_call",
+          "name": "skill_tool"
+        },
+        {
+          "event": "skill_loaded",
+          "name": "marketplace-recommendation"
+        },
+        {
+          "event": "tool_call",
+          "name": "recommend_products"
+        },
+        {
+          "event": "recommendation",
+          "result": {
+            "status": "ok",
+            "keyword": "CRM",
+            "products": [
+              {
+                "id": "a392d564-f052-4b6b-a4e7-effd458289af",
+                "name": "合力亿捷全场景智能运营软件SaaS版",
+                "seller": "北京合力亿捷科技股份有限公司",
+                "description": "合力亿捷全场景智能运营软件衔接企业自有CRM系统，与订单系统集成，提供动态活码、一键添加企微和基于完整客户画像执行销售SOP等盘活",
+                "url": "https://marketplace.huaweicloud.com/contents/a392d564-f052-4b6b-a4e7-effd458289af",
+                "delivery": "SaaS",
+                "price": 225.0,
+                "price_display": "￥225/月",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 81.0,
+                "tags": [
+                  "AI商店",
+                  "信息化管理",
+                  "移动CRM",
+                  "在线CRM",
+                  "数据监测",
+                  "ERP系统",
+                  "数据库备份",
+                  "客户管理",
+                  "联合解决方案"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：crm",
+                  "交付方式为 SaaS"
+                ]
+              },
+              {
+                "id": "e54ba03a-1d85-4dac-b8b3-301cd834cb39",
+                "name": "合力亿捷云客服",
+                "seller": "北京合力亿捷科技股份有限公司",
+                "description": "合力智能云客服为企业联络中心打造的AI驱动型全场景解决方案，基于分层架构与统一通信技术体系，深度融合DeepSeek大模型，构建了“端到端”的智慧服务中枢。系统层次结构清晰，接口明确，具有良好的扩展性",
+                "url": "https://marketplace.huaweicloud.com/contents/e54ba03a-1d85-4dac-b8b3-301cd834cb39",
+                "delivery": "SaaS",
+                "price": 1800.0,
+                "price_display": "￥1800/年",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 96.0,
+                "tags": [
+                  "联合解决方案",
+                  "在线CRM",
+                  "ERP系统",
+                  "移动CRM",
+                  "客户管理",
+                  "信息化管理",
+                  "AI商店",
+                  "Agent应用",
+                  "数据监测",
+                  "数据库备份"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：crm",
+                  "交付方式为 SaaS"
+                ]
+              },
+              {
+                "id": "4a5ae810-78a0-4349-960c-11cae75b2a0e",
+                "name": "恒康智慧中台",
+                "seller": "广州恒康信息科技有限公司",
+                "description": "版本说明：一、中大企业版本：包含POS标准模块含移动端、CRM标准模块、POS&OMS标准模块、智能导购店铺授权、小程序商城（多网店模块",
+                "url": "https://marketplace.huaweicloud.com/contents/4a5ae810-78a0-4349-960c-11cae75b2a0e",
+                "delivery": "SaaS",
+                "price": 1000.0,
+                "price_display": "￥1000/年",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 0.0,
+                "tags": [
+                  "ERP系统",
+                  "成本管理",
+                  "智慧零售",
+                  "移动CRM",
+                  "零售管理"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：crm",
+                  "交付方式为 SaaS"
+                ]
+              },
+              {
+                "id": "a28c0c36-1eed-4980-a259-392f03e32903",
+                "name": "商软云应用集成平台SaaS版",
+                "seller": "深圳市商软信息科技有限公司",
+                "description": "集成平台产品,适配云上及云下PLM /MES/ERP/SRM/CRM/OA/HR/WMS/BI产品及定制化系统业务数据集成,是企业上云的一站式高效配置化接口集成平台",
+                "url": "https://marketplace.huaweicloud.com/contents/a28c0c36-1eed-4980-a259-392f03e32903",
+                "delivery": "SaaS",
+                "price": 6460.0,
+                "price_display": "￥6460/年",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 10.0,
+                "tags": [
+                  "智能制造",
+                  "数据采集",
+                  "智能协作",
+                  "信息化管理",
+                  "智能楼宇",
+                  "集成管理",
+                  "智慧农业",
+                  "AI商店",
+                  "数字化政府"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：crm",
+                  "交付方式为 SaaS"
+                ]
+              },
+              {
+                "id": "febbca31-4e9b-4adb-826d-e6567e8d991b",
+                "name": "客户跟进",
+                "seller": "河北银合科技有限公司",
+                "description": "客户跟进为销售团队提供从线索到签约回款的全流程管理。可跟进实时掌握客户诉求问题，记录每一次的客户沟通细节，设置下一次沟通的提醒时间，保障客户信息不丢失，全面掌握客户状态，分析出优质的客户，为决策提供数据依据。",
+                "url": "https://marketplace.huaweicloud.com/contents/febbca31-4e9b-4adb-826d-e6567e8d991b",
+                "delivery": "SaaS",
+                "price": 100.0,
+                "price_display": "￥100/月",
+                "trial": true,
+                "trial_price_display": "￥0.00/试用3天",
+                "rating": 0.0,
+                "sales": 2.0,
+                "tags": [
+                  "客户管理",
+                  "移动CRM"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：crm",
+                  "交付方式为 SaaS"
+                ]
+              }
+            ],
+            "upstream_total": 26,
+            "candidates_checked": 26,
+            "matches_in_candidates": 25,
+            "fetched_at": "2026-11-11T04:48:57.482385+00:00",
+            "source": "https://marketplace.huaweicloud.com/search/",
+            "request": {
+              "flow_id": "101000",
+              "keyword": "CRM",
+              "limit": 40,
+              "offset": 0,
+              "filter": {
+                "content_mode": 5
+              }
+            },
+            "price_note": "价格是云商店搜索列表展示价，可能按用户、次数、资源或规格计费；不能据此保证整套方案或多人总预算。最终以详情页规格和商家报价为准。",
+            "scope_note": "仅核验当前返回的前 40 个候选；无匹配不代表全站无货。可简化关键词或经用户同意放宽条件。"
+          }
+        },
+        {
+          "event": "tool_call",
+          "name": "recommend_products"
+        },
+        {
+          "event": "recommendation",
+          "result": {
+            "status": "ok",
+            "keyword": "客户管理",
+            "products": [
+              {
+                "id": "febbca31-4e9b-4adb-826d-e6567e8d991b",
+                "name": "客户跟进",
+                "seller": "河北银合科技有限公司",
+                "description": "客户跟进为销售团队提供从线索到签约回款的全流程管理。可跟进实时掌握客户诉求问题，记录每一次的客户沟通细节，设置下一次沟通的提醒时间",
+                "url": "https://marketplace.huaweicloud.com/contents/febbca31-4e9b-4adb-826d-e6567e8d991b",
+                "delivery": "SaaS",
+                "price": 100.0,
+                "price_display": "￥100/月",
+                "trial": true,
+                "trial_price_display": "￥0.00/试用3天",
+                "rating": 0.0,
+                "sales": 2.0,
+                "tags": [
+                  "客户管理",
+                  "移动CRM"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：客户管理",
+                  "交付方式为 SaaS"
+                ]
+              },
+              {
+                "id": "05333b58-b987-466a-a7b5-25ef0ef38485",
+                "name": "云售后工单系统",
+                "seller": "云码计算机技术（深圳）有限公司",
+                "description": "云售后是一站式售后服务管理系统，通过在线客服，小程序、网站等，打通报修、寄修、工单派单、备件仓库、设备维保、产品质保、报表分析、客户管理等全周期",
+                "url": "https://marketplace.huaweicloud.com/contents/05333b58-b987-466a-a7b5-25ef0ef38485",
+                "delivery": "SaaS",
+                "price": 180.0,
+                "price_display": "￥180/年",
+                "trial": true,
+                "trial_price_display": "￥0.00/试用7天",
+                "rating": 0.0,
+                "sales": 26.0,
+                "tags": [
+                  "信息化管理",
+                  "客户管理"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：客户管理",
+                  "交付方式为 SaaS"
+                ]
+              },
+              {
+                "id": "e58568e1-51f7-48c4-a3aa-a8ec168b2ceb",
+                "name": "企业一体化管理系统",
+                "seller": "温州范少伯信息科技有限公司",
+                "description": "企业一体化管理系统是一套集销售、采购、生产、库存、财务、办公于一体的综合性管理系统。",
+                "url": "https://marketplace.huaweicloud.com/contents/e58568e1-51f7-48c4-a3aa-a8ec168b2ceb",
+                "delivery": "SaaS",
+                "price": 200000.0,
+                "price_display": "￥200000/次",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 0.0,
+                "tags": [
+                  "ERP系统",
+                  "信息化管理",
+                  "客户管理"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：客户管理",
+                  "交付方式为 SaaS"
+                ]
+              },
+              {
+                "id": "fee3890a-9142-4806-9452-4d888bf69a80",
+                "name": "蓝凌业务管理云平台",
+                "seller": "深圳市蓝凌软件股份有限公司",
+                "description": "蓝凌企业业务管理云基于中小企业的业务与管理的双重需求，从获客到现金到收入的全价值链在线化，并辅以流程决策和知识赋能，助推企业转型升",
+                "url": "https://marketplace.huaweicloud.com/contents/fee3890a-9142-4806-9452-4d888bf69a80",
+                "delivery": "SaaS",
+                "price": 1000.0,
+                "price_display": "￥1000/年",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 1.0,
+                "tags": [
+                  "工作流",
+                  "信息化管理",
+                  "客户管理",
+                  "文档存储管理"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：客户管理",
+                  "交付方式为 SaaS"
+                ]
+              },
+              {
+                "id": "e54ba03a-1d85-4dac-b8b3-301cd834cb39",
+                "name": "合力亿捷云客服",
+                "seller": "北京合力亿捷科技股份有限公司",
+                "description": "客户管理连接企业所有营销触点，实现客户数据统一管理，支持数据导入。清晰识别客户来源轨迹，有效记录便于评估渠道营销效果。",
+                "url": "https://marketplace.huaweicloud.com/contents/e54ba03a-1d85-4dac-b8b3-301cd834cb39",
+                "delivery": "SaaS",
+                "price": 1800.0,
+                "price_display": "￥1800/年",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 96.0,
+                "tags": [
+                  "联合解决方案",
+                  "在线CRM",
+                  "ERP系统",
+                  "移动CRM",
+                  "客户管理",
+                  "信息化管理",
+                  "AI商店",
+                  "Agent应用",
+                  "数据监测",
+                  "数据库备份"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：客户管理",
+                  "交付方式为 SaaS"
+                ]
+              }
+            ],
+            "upstream_total": 181,
+            "candidates_checked": 40,
+            "matches_in_candidates": 15,
+            "fetched_at": "2026-11-11T04:48:59.672019+00:00",
+            "source": "https://marketplace.huaweicloud.com/search/",
+            "request": {
+              "flow_id": "101000",
+              "keyword": "客户管理",
+              "limit": 40,
+              "offset": 0,
+              "filter": {
+                "content_mode": 5
+              }
+            },
+            "price_note": "价格是云商店搜索列表展示价，可能按用户、次数、资源或规格计费；不能据此保证整套方案或多人总预算。最终以详情页规格和商家报价为准。",
+            "scope_note": "仅核验当前返回的前 40 个候选；无匹配不代表全站无货。可简化关键词或经用户同意放宽条件。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "invoice",
+      "query": "想通过API识别增值税发票内容，推荐华为云商店的2款商品。",
+      "delivery": "API",
+      "elapsed_seconds": 7.26,
+      "output": "已按「发票识别 + API 交付」实时检索云商店，下面 2 款都明确支持增值税发票内容识别：\n\n| 商品 | 商家 | 交付与计费 | 试用 | 适配理由与待核验 |\n|---|---|---|---|---|\n| [发票识别](https://marketplace.huaweicloud.com/contents/39868d37-e475-4d72-9582-2cc8babe2ff3) | 杭州怜花科技有限公司 | API，列表展示价 ￥0/30次 | 支持试用 | 简介明确为“智能解析增值税发票图像”，可返回发票代码、号码、开票日期、纳税人识别号等字段，适合想先验证字段完整度；待核验：30次之后的计费梯度、并发与图片格式限制 |\n| [发票识别](https://marketplace.huaweicloud.com/contents/2796db76-e4ec-48cd-812c-6b1b3aae39d0) | 北京中安未来科技有限公司 | API，列表展示价 ￥99/1000次 | 不支持试用 | 支持增值税专用发票、普通发票、电子发票及机动车发票自动分类识别，票种覆盖更全，适合后续扩票种；待核验：无试用需先用测试样例确认识别字段，以及超1000次的单价 |\n\n选择建议：\n- 若想先用免费额度验证识别效果与字段 → 选怜花科技。\n- 若要覆盖专票、普票、电子票等多种票种、按千次单价预算 → 选中安未来的商品。\n\n说明：以上为该关键词下前 40 个候选中筛选出的 API 类商品，价格是列表展示价，实际费用按调用量规格由商家报价，不代表全站结论。\n\n请补充两点，我可以进一步筛选：日均发票调用量大概多少？是否需要同步返回发票明细行（商品/服务明细）？",
+      "checks": {
+        "passed": true,
+        "errors": [],
+        "product_count": 5,
+        "grounded_url_count": 2
+      },
+      "trace": [
+        {
+          "event": "tool_call",
+          "name": "skill_tool"
+        },
+        {
+          "event": "skill_loaded",
+          "name": "marketplace-recommendation"
+        },
+        {
+          "event": "tool_call",
+          "name": "recommend_products"
+        },
+        {
+          "event": "recommendation",
+          "result": {
+            "status": "ok",
+            "keyword": "发票识别",
+            "products": [
+              {
+                "id": "39868d37-e475-4d72-9582-2cc8babe2ff3",
+                "name": "发票识别",
+                "seller": "杭州怜花科技有限公司",
+                "description": "【感受科技的温度】发票OCR —— 智能解析增值税发票图像，识别返回发票代码，发票号码，开票日期，密码区，纳税人识别号，地址，电话，发票名称，",
+                "url": "https://marketplace.huaweicloud.com/contents/39868d37-e475-4d72-9582-2cc8babe2ff3",
+                "delivery": "API",
+                "price": 0.0,
+                "price_display": "￥0/30次",
+                "trial": true,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 6.0,
+                "tags": [
+                  "信息化管理",
+                  "金融",
+                  "文本识别",
+                  "AI商店",
+                  "智能制造",
+                  "图像识别",
+                  "算法模型",
+                  "上云工具"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：发票识别",
+                  "交付方式为 API"
+                ]
+              },
+              {
+                "id": "2796db76-e4ec-48cd-812c-6b1b3aae39d0",
+                "name": "发票识别",
+                "seller": "北京中安未来科技有限公司",
+                "description": "中安未来票据识别服务，可自动分类识别全票种发票，支持增值税专用发票、增值税普通发票，电子发票、火车票以及机动车销售统一发票识别。",
+                "url": "https://marketplace.huaweicloud.com/contents/2796db76-e4ec-48cd-812c-6b1b3aae39d0",
+                "delivery": "API",
+                "price": 99.0,
+                "price_display": "￥99/1000次",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 1.0,
+                "tags": [
+                  "AI应用",
+                  "AI商店"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：发票识别",
+                  "交付方式为 API"
+                ]
+              },
+              {
+                "id": "d34548c4-4697-4a38-bed2-a0a67a257f2b",
+                "name": "PDF发票OCR_仅识别",
+                "seller": "杭州快证签科技有限公司",
+                "description": "发票识别传入增值税发票PDF base64编码字符串或PDF下载url，识别发票消费类型、销售方名称、合计税额、销售方识别号、销售",
+                "url": "https://marketplace.huaweicloud.com/contents/d34548c4-4697-4a38-bed2-a0a67a257f2b",
+                "delivery": "API",
+                "price": 0.0,
+                "price_display": "￥0/10次",
+                "trial": true,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 36.0,
+                "tags": [
+                  "AI商店",
+                  "教育",
+                  "开发者",
+                  "图像识别",
+                  "文本识别",
+                  "金融"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：发票识别",
+                  "交付方式为 API"
+                ]
+              },
+              {
+                "id": "01db05e3-3667-466a-93b8-148717bd6315",
+                "name": "发票识别_发票OCR识别_发票图像识别_发票图片识别",
+                "seller": "杭州网尚科技有限公司",
+                "description": "支持增值税专用发票，机动车，增值税普通发票，火车票，电子发票(普通发票)等十几种票据的识别，识别准确，响应快速。",
+                "url": "https://marketplace.huaweicloud.com/contents/01db05e3-3667-466a-93b8-148717bd6315",
+                "delivery": "API",
+                "price": 0.0,
+                "price_display": "￥0/20次",
+                "trial": true,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 5.0,
+                "tags": [
+                  "AI商店",
+                  "图像识别",
+                  "开发者",
+                  "文本识别"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：发票识别",
+                  "交付方式为 API"
+                ]
+              },
+              {
+                "id": "f4c1c375-5280-4f72-812f-b85addef2965",
+                "name": "全国医疗发票OCR识别 住院发票OCR识别 专业医疗发票识别",
+                "seller": "杭州安那其科技有限公司",
+                "description": "【住院发票OCR识别 门诊发票OCR】传入医疗发票图像，精准识别发票文字信息，支持识别全国各地门诊/住院发票。返回包含发票号、住院",
+                "url": "https://marketplace.huaweicloud.com/contents/f4c1c375-5280-4f72-812f-b85addef2965",
+                "delivery": "API",
+                "price": 0.0,
+                "price_display": "￥0/5次",
+                "trial": true,
+                "trial_price_display": "",
+                "rating": 5.0,
+                "sales": 2.0,
+                "tags": [
+                  "AI应用",
+                  "AI商店",
+                  "上云工具",
+                  "位置查询",
+                  "金融",
+                  "智能制造",
+                  "信息化管理",
+                  "图像识别",
+                  "文本识别"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：发票识别",
+                  "交付方式为 API"
+                ]
+              }
+            ],
+            "upstream_total": 531,
+            "candidates_checked": 40,
+            "matches_in_candidates": 23,
+            "fetched_at": "2026-11-11T04:49:09.596398+00:00",
+            "source": "https://marketplace.huaweicloud.com/search/",
+            "request": {
+              "flow_id": "101000",
+              "keyword": "发票识别",
+              "limit": 40,
+              "offset": 0,
+              "filter": {
+                "content_mode": 7
+              }
+            },
+            "price_note": "价格是云商店搜索列表展示价，可能按用户、次数、资源或规格计费；不能据此保证整套方案或多人总预算。最终以详情页规格和商家报价为准。",
+            "scope_note": "仅核验当前返回的前 40 个候选；无匹配不代表全站无货。可简化关键词或经用户同意放宽条件。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "waf",
+      "query": "公司网站想防SQL注入和XSS攻击，推荐2款WAF相关商品，给出商家和详情链接。",
+      "elapsed_seconds": 6.31,
+      "output": "根据实时商品查询结果（关键词「WAF」，共核验 36 个候选），为网站防护 SQL 注入、XSS，推荐以下 2 款：\n\n| 商品 | 商家 | 交付方式 | 列表展示价 | 适配理由 |\n|---|---|---|---|---|\n| [长亭科技WAF--雷池（SafeLine）下一代Web应用防火墙](https://marketplace.huaweicloud.com/contents/e04c1d47-675e-43e3-a562-0318f63d36e5) | 北京长亭科技有限公司 | 镜像 | ￥0/小时（按资源计费，实际规格需确认） | 下一代 Web 应用防火墙（NGWAF），基于语义分析检测，对注入类、脚本类攻击的规则依赖较低，以镜像方式交付，便于在云上部署 |\n| [安恒明御Web应用防火墙](https://marketplace.huaweicloud.com/contents/25d59db4-aaf6-465b-b8da-faa5e84f2e09) | 杭州安恒信息技术股份有限公司 | 镜像 | ￥0/小时（实际规格需确认） | 对网站及 APP 业务流量做多维度检测与防护，标签含「安全等保」「混合云」，销量 9（在本次候选中相对较高） |\n\n选择建议：\n- 如果偏向自建部署、灵活调优规则，可先看雷池（长亭）。\n- 如果有等保合规诉求、需要成熟国内安全厂商，可先看安恒明御。\n\n待核验（工具数据未覆盖，需向商家确认）：\n- 是否明确覆盖 SQL 注入与 XSS 防护规则集，以及规则库更新方式；\n- 镜像规格、并发/带宽上限与计费口径（￥0/小时不代表免费）；\n- 是否支持 HTTPS 卸载、源站隐藏，以及是否需要搭配负载均衡；\n- 两款均未标注支持试用。\n\n需要我按「必须支持试用」或「指定预算」再筛一轮，或补充对比 SaaS 类 WAF 吗？",
+      "checks": {
+        "passed": true,
+        "errors": [],
+        "product_count": 5,
+        "grounded_url_count": 2
+      },
+      "trace": [
+        {
+          "event": "tool_call",
+          "name": "skill_tool"
+        },
+        {
+          "event": "skill_loaded",
+          "name": "marketplace-recommendation"
+        },
+        {
+          "event": "tool_call",
+          "name": "recommend_products"
+        },
+        {
+          "event": "recommendation",
+          "result": {
+            "status": "ok",
+            "keyword": "WAF",
+            "products": [
+              {
+                "id": "50f42978-ddd6-437a-88e1-c396cb7ae0d4",
+                "name": "天磊卫士WEB应用防护系统 WEB应用防火墙(WAF) Web防火墙 云Waf",
+                "seller": "天磊卫士（深圳）科技有限公司",
+                "description": "一、产品介绍WEB应用防护系统（WAF），是部署在客户端与WEB服务器之间的HTTP/HTTPS协议层安全防护系统，核心是拦截恶意攻击",
+                "url": "https://marketplace.huaweicloud.com/contents/50f42978-ddd6-437a-88e1-c396cb7ae0d4",
+                "delivery": "硬件",
+                "price": 5000.0,
+                "price_display": "￥5000/个",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 0.0,
+                "tags": [
+                  "安全防御",
+                  "访问控制",
+                  "网络边界安全",
+                  "防火墙",
+                  "主动防御"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：waf"
+                ]
+              },
+              {
+                "id": "e04c1d47-675e-43e3-a562-0318f63d36e5",
+                "name": "长亭科技WAF--雷池（SafeLine）下一代Web应用防火墙",
+                "seller": "北京长亭科技有限公司",
+                "description": "雷池（SafeLine）是业内首款基于人工智能语义分析的下一代Web应用防火墙（NGWAF，Next Generation Web Application",
+                "url": "https://marketplace.huaweicloud.com/contents/e04c1d47-675e-43e3-a562-0318f63d36e5",
+                "delivery": "镜像",
+                "price": 0.0,
+                "price_display": "￥0/小时",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 0.0,
+                "tags": [
+                  "安全防御"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：waf"
+                ]
+              },
+              {
+                "id": "16519f92-4a1f-4f84-88f1-c619e4c59569",
+                "name": "WEB应用防火墙配置 WAF云防火墙",
+                "seller": "北京云领航科技有限公司",
+                "description": "WEB应用防火墙（WAF） 实时监控和防护：对HTTP/HTTPS流量进行深度分析，实时检测并阻断SQL注入、跨站脚本（XSS）等常见WEB攻击。",
+                "url": "https://marketplace.huaweicloud.com/contents/16519f92-4a1f-4f84-88f1-c619e4c59569",
+                "delivery": "人工服务",
+                "price": 1.0,
+                "price_display": "￥1/次",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 0.0,
+                "tags": [
+                  "安全防御"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：waf"
+                ]
+              },
+              {
+                "id": "c78928e7-6c01-46d1-94be-55fbe1338d97",
+                "name": "深信服 WAF云防火墙 授权",
+                "seller": "北京君云时代科技有限公司",
+                "description": "深信服WAF（Web应用防火墙）云防火墙授权是一款专业的Web应用安全防护解决方案，旨在为企业提供全面的Web业务安全保障。",
+                "url": "https://marketplace.huaweicloud.com/contents/c78928e7-6c01-46d1-94be-55fbe1338d97",
+                "delivery": "人工服务",
+                "price": 1.0,
+                "price_display": "￥1/月",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 3.0,
+                "tags": [
+                  "防火墙"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：waf"
+                ]
+              },
+              {
+                "id": "25d59db4-aaf6-465b-b8da-faa5e84f2e09",
+                "name": "安恒明御Web应用防火墙",
+                "seller": "杭州安恒信息技术股份有限公司",
+                "description": "安恒明御WEB应用防火墙，后简称云WAF，实现对网站及APP业务流量进行多维度、深层次的安全检测和防护。",
+                "url": "https://marketplace.huaweicloud.com/contents/25d59db4-aaf6-465b-b8da-faa5e84f2e09",
+                "delivery": "镜像",
+                "price": 0.0,
+                "price_display": "￥0/小时",
+                "trial": false,
+                "trial_price_display": "",
+                "rating": 0.0,
+                "sales": 9.0,
+                "tags": [
+                  "安全等保",
+                  "Web应用防火墙",
+                  "混合云"
+                ],
+                "reasons": [
+                  "商品名称/简介/标签包含：waf"
+                ]
+              }
+            ],
+            "upstream_total": 36,
+            "candidates_checked": 36,
+            "matches_in_candidates": 35,
+            "fetched_at": "2026-11-11T04:49:15.846119+00:00",
+            "source": "https://marketplace.huaweicloud.com/search/",
+            "request": {
+              "flow_id": "101000",
+              "keyword": "WAF",
+              "limit": 40,
+              "offset": 0,
+              "filter": {}
+            },
+            "price_note": "价格是云商店搜索列表展示价，可能按用户、次数、资源或规格计费；不能据此保证整套方案或多人总预算。最终以详情页规格和商家报价为准。",
+            "scope_note": "仅核验当前返回的前 40 个候选；无匹配不代表全站无货。可简化关键词或经用户同意放宽条件。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "clarify",
+      "query": "帮我推荐几个华为云商店商品。",
+      "clarify": true,
+      "elapsed_seconds": 3.07,
+      "output": "云商店商品范围很广，我需要先了解您的用途，才能给出有针对性的候选。\n\n请告诉我以下信息，至少包含第 1 点即可开始：\n\n1. **业务用途**：想解决什么问题？例如企业邮箱、CRM 客户管理、发票/OCR 识别、Web 攻击防护（WAF）、数据库、建站等。\n2. **交付方式偏好**：SaaS 订阅、镜像部署、License、人工服务等（不限定也可以）。\n3. **预算**：单件商品列表价上限或整体预算（说明是每月还是每年）。\n4. **其他**：是否必须支持试用、使用人数或调用量规模。\n\n补充大致方向后，我会实时查询云商店并给出带详情链接的候选清单，方便您核验。",
+      "checks": {
+        "passed": true,
+        "errors": [],
+        "product_count": 0,
+        "grounded_url_count": 0
+      },
+      "trace": [
+        {
+          "event": "tool_call",
+          "name": "skill_tool"
+        },
+        {
+          "event": "skill_loaded",
+          "name": "marketplace-recommendation"
+        }
+      ]
+    },
+    {
+      "id": "no_match",
+      "query": "只找名称或简介含ZXQJ999量子咖啡机的SaaS商品，列表价0元，不能用别的商品替代。",
+      "no_match": true,
+      "delivery": "SaaS",
+      "max_price": 0,
+      "elapsed_seconds": 6.91,
+      "output": "已按您指定的条件检索，**没有找到符合的商品**，本次不会用其他商品替代。\n\n**检索条件（均未放宽）**\n- 关键词：`ZXQJ999量子咖啡机`，要求名称或简介包含该完整字符串\n- 交付方式：SaaS\n- 列表展示价：0 元\n- 检索时间：2026-11-11（工具实时结果）\n\n**结果说明**\n- 工具返回状态 `no_match`，上游候选总数为 0，无任何商品可供核实。\n- 查询范围仅为云商店搜索页返回的前 40 个候选，因此“本次无匹配”不等于全站完全没有该商品。\n- 由于您要求精确词匹配，我未改用“量子咖啡机”等缩写或同义关键词重试，也未放宽价格或交付方式。\n\n**可选下一步（需您确认后才能放宽）**\n1. 是否允许放宽列表价（如不限 0 元），保留 SaaS + 精确词？\n2. 是否允许放宽交付方式（如不限 SaaS），或改用更短的关键词检索？\n\n请告知哪一项可调整，我再检索一次。\n\n（注：本助手不进行下单或支付。）",
+      "checks": {
+        "passed": true,
+        "errors": [],
+        "product_count": 0,
+        "grounded_url_count": 0
+      },
+      "trace": [
+        {
+          "event": "tool_call",
+          "name": "skill_tool"
+        },
+        {
+          "event": "skill_loaded",
+          "name": "marketplace-recommendation"
+        },
+        {
+          "event": "tool_call",
+          "name": "recommend_products"
+        },
+        {
+          "event": "recommendation",
+          "result": {
+            "status": "no_match",
+            "keyword": "ZXQJ999量子咖啡机",
+            "products": [],
+            "upstream_total": 0,
+            "candidates_checked": 0,
+            "matches_in_candidates": 0,
+            "fetched_at": "2026-11-11T04:49:25.780293+00:00",
+            "source": "https://marketplace.huaweicloud.com/search/",
+            "request": {
+              "flow_id": "101000",
+              "keyword": "ZXQJ999量子咖啡机",
+              "limit": 40,
+              "offset": 0,
+              "filter": {
+                "content_mode": 5,
+                "price_end": 0
+              }
+            },
+            "price_note": "价格是云商店搜索列表展示价，可能按用户、次数、资源或规格计费；不能据此保证整套方案或多人总预算。最终以详情页规格和商家报价为准。",
+            "scope_note": "仅核验当前返回的前 40 个候选；无匹配不代表全站无货。可简化关键词或经用户同意放宽条件。"
+          }
+        }
+      ]
+    }
+  ]
+}
