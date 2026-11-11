@@ -2,7 +2,8 @@
 
 基于 [openJiuwen agent-core](https://github.com/openJiuwen-ai/agent-core) 的原生 harness `DeepAgent` 实现，接入 DeepSeek。
 推荐工作流封装在 [商品推荐 skill](skills/marketplace-recommendation/SKILL.md)，由 `SkillUseRail` 发现、
-`skill_tool` 实际加载，再通过 SDK `LocalFunction` 工具查询华为云商店实时商品。
+`skill_tool` 实际加载，模型按 Skill 说明使用 harness 内置 `bash` 执行推荐脚本，查询华为云商店实时商品。
+没有自定义 Skill loader，也没有独立注册商品推荐函数。
 
 ## 启动
 
@@ -31,7 +32,7 @@ uv run marketplace-agent search 企业邮箱 --delivery SaaS --trial --max-price
 uv run marketplace-agent search 发票 --delivery API --json
 ```
 
-`chat` 通过真实模型运行 harness；`search` 是工具层的直接调用，不经过模型。
+`chat` 通过真实模型运行 harness；`search` 直接启动同一个 Skill 脚本进程，不经过模型。
 
 ## 推荐能力
 
@@ -39,41 +40,41 @@ uv run marketplace-agent search 发票 --delivery API --json
 - 展示名称、商家、价格及原始单位、试用、适配理由和商品详情链接，支持候选对比和多轮追问。
 - 模糊诉求先问业务用途；无匹配如实说明，不用搜索引擎的弱相关兜底商品凑数。
 - 价格筛选、交付方式和试用标注在本地再次核验；查询失败返回明确错误，不伪装成“无商品”。
-- 只向模型开放 `skill_tool` 和 `recommend_products`。skill 正文成功加载后才允许搜索。
-  文件操作边界限制在 skill 目录和被忽略的 `.workspace/`；模型只可通过 skill 工具读取 skill 文件，
-  harness 在 `.workspace/` 保存运行文件。
+- 使用原生 SkillUseRail 提供的 `skill_tool`、`read_file` 和 `bash`，模型先读取 Skill，再按说明执行脚本。
+  Shell 可执行命令配置为当前 Python 解释器，harness 在被忽略的 `.workspace/` 保存运行文件。
+  使用 SDK 本地执行模式；文件路径检查不等同于操作系统级进程隔离。
 
 ## 实现结构
 
 ```text
 用户 → openJiuwen DeepAgent / ReAct → skill_tool 加载 SKILL.md
-                                  → recommend_products (LocalFunction)
+                                  → bash 执行 Skill 的 scripts/recommendation.py --json
                                   → MarketplaceClient → 云商店搜索 API
-                                  → 相关性与条件校验 → 有来源的中文建议
+                                  → 相关性与条件校验 → JSON → 模型生成有来源的中文建议
 ```
 
 | 文件 | 职责 |
 | --- | --- |
 | `skills/marketplace-recommendation/SKILL.md` | 推荐、追问、比较、无结果与价格口径的业务规则 |
 | `skills/marketplace-recommendation/references/search-api.md` | 从前端脚本确认的接口契约与来源 |
-| `src/marketplace_agent/agent.py` | 创建 harness、装载 SkillUseRail、注册工具和调用追踪 |
-| `src/marketplace_agent/skill_loader.py` | 从源码目录或安装包加载 Skill 自带的 Python 工具 |
+| `src/marketplace_agent/agent.py` | 创建 harness、配置原生 SkillUseRail 和执行环境、观察工具调用 |
+| `src/marketplace_agent/paths.py` | 定位源码或安装包内的 Skill 路径，不导入任何 Skill 业务代码 |
 | `skills/marketplace-recommendation/scripts/marketplace_client.py` | 异步 HTTP、有限重试、字段与 HTML 归一化、详情链接校验 |
 | `skills/marketplace-recommendation/scripts/recommendation.py` | 条件校验、去重、排序、推荐证据与独立命令入口 |
-| `skills/marketplace-recommendation/scripts/__init__.py` | 导出工具实现、说明和参数 schema，不依赖宿主或 SDK |
-| `scripts/evaluate.py` | 真实模型和真实搜索接口的场景评估，写入可复查报告 |
+| `scripts/evaluate.py` | 手动批量测试真实模型和真实搜索接口，检查调用证据并保存报告；正常运行 Agent 不需要此脚本 |
 
 SDK 固定到 `4836fc2815b897bf022e36d5df22481fb446047d`，依赖固定在 `uv.lock`，避免 develop 分支漂移。
 项目不修改上游 SDK。构建 wheel 时会把 skill 一起打包。
 
-推荐逻辑、搜索适配、工具 schema 和依赖声明都位于 Skill 内。复制
+推荐逻辑、搜索适配、命令行参数和依赖声明都位于 Skill 内。复制
 `skills/marketplace-recommendation/` 到其他项目并安装其中的 `requirements.txt` 后，即可独立使用：
 
 ```bash
 python skills/marketplace-recommendation/scripts/recommendation.py 企业邮箱 --delivery SaaS --trial --max-price 500 --json
 ```
 
-主程序仅负责加载 Skill、模型与 harness 配置、工具注册和交互。
+主程序只配置模型、harness、Skill 目录和交互；Skill 的发现、正文读取和脚本执行由 SDK 原生能力完成。
+`TraceRail` 仅记录原生调用及脚本 JSON，用于 `--trace` 和测试，不改变工具输出或执行业务代码。
 
 ## 测试
 

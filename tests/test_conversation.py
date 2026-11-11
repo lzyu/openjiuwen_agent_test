@@ -31,7 +31,9 @@ async def test_real_multiturn_preserves_crm_intent_and_refines_filters():
                     "followup_query": followup_query, "followup_answer": followup.get("output"),
                     "trace": trace}
         Path("docs/conversation-results.json").write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        assert any(e["event"] == "skill_loaded" for e in followup_trace)
+        # Native Skills can be reused within a conversation; no forced reload per turn.
+        assert any(e["event"] == "skill_loaded" for e in trace[:boundary])
+        assert any(e["event"] == "script_execution" and e["success"] for e in followup_trace)
         results = [e["result"] for e in followup_trace if e["event"] == "recommendation"]
         assert results and any(r["products"] for r in results)
         for result in results:

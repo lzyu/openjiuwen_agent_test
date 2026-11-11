@@ -1,6 +1,11 @@
 import os
+from pathlib import Path
+import sys
 
 import pytest
+
+# Unit tests import standalone scripts normally; the Agent never imports them.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills" / "marketplace-recommendation" / "scripts"))
 
 
 def pytest_collection_modifyitems(items):

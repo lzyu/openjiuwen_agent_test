@@ -15,11 +15,11 @@ DeepSeek `deepseek-flash`、华为云商店实时搜索接口。SDK 通过锁定
 | 可分发构建 | `uv build` | wheel 和源码包包含完整 Skill 脚本；解包后加载及推荐调用通过 |
 | 独立 Skill 命令 | `uv run python skills/marketplace-recommendation/scripts/recommendation.py 企业邮箱 --delivery SaaS --trial --max-price 500 --json` | 真实搜索返回符合条件的商品 |
 
-确定性测试覆盖：harness 内实际加载 skill 正文并调用业务工具、工具暴露范围、
+确定性测试覆盖：harness 内实际加载 Skill 正文并通过原生 bash 执行脚本帮助命令、原生工具暴露范围、
 价格/试用/交付硬条件二次校验、去重、弱相关兜底剔除、免费价0、HTML单位解析、
 异常业务码、接口结构变化、零结果 `pagination:null`、503 重试、不可信详情链接及无效预算。
 迁移后新增可移植性测试：复制 Skill 后，在禁止导入宿主和 openJiuwen 的独立进程中调用推荐工具，
-以及从其他工作目录运行 Skill 自带命令。推荐实现、搜索适配、工具 schema 和依赖均随 Skill 分发。
+以及从其他工作目录运行 Skill 自带命令。推荐实现、搜索适配、命令行参数和依赖均随 Skill 分发。
 
 ## 真实对话场景
 
@@ -32,12 +32,14 @@ DeepSeek `deepseek-flash`、华为云商店实时搜索接口。SDK 通过锁定
 | “推荐几个华为云商店商品” | 先问业务用途等关键条件，没有搜索随机商品 | 通过 |
 | 精确词 ZXQJ999量子咖啡机、SaaS、0元 | 有效空结果；不以无关商品替代，不把前40个候选范围说成全站无货 | 通过 |
 
-自动检查验证：实际成功加载 skill 正文、回答非空、回答中的商品详情 URL 都来自本轮工具结果、
+自动检查验证：实际成功加载 Skill 正文、通过原生 bash 执行推荐脚本、回答非空、回答中的商品详情 URL 都来自脚本结果、
 交付方式/预算/试用筛选条件未被放宽，以及无匹配/追问场景的预期行为。
 候选商品总数是工具返回商品去重数，可能大于最终回答选择数。
 这不是基于完整人工标注集的推荐准确率或召回率结论。
 
 完整问题、原始回答、检查结果及每轮工具证据见 [evaluation-results.json](evaluation-results.json)。
+本轮记录中，商品查询均有原生 bash 的 script_execution 事件及 JSON 标准输出；
+模糊诉求只加载 Skill 并追问，没有启动搜索脚本。
 
 ## 多轮上下文
 
@@ -54,16 +56,19 @@ DeepSeek `deepseek-flash`、华为云商店实时搜索接口。SDK 通过锁定
 返回「客户跟进」（河北银合科技有限公司），列表价￥100/月、标注试用3天，
 回答附带真实详情链接并指出需核验账号数量和计费规格。
 使用同一个 `conversation_id` 完成两轮，第二轮没有重新在用户输入中指定 CRM。
+原生流程允许同一会话复用已经读取的 Skill 正文；第二轮仍实际执行脚本重新查询，并保留新增筛选条件。
 完整记录见 [conversation-results.json](conversation-results.json)。
 
 ## 本次验证后修正
 
-- 原生 SkillTool 依赖 SysOperation 文件读取：为 skill 配置受限文件操作对象，保留2个模型可见工具。
+- 原生 SkillTool 依赖 SysOperation 文件读取：配置原生 SkillUseRail 和执行环境，模型可见工具为 skill_tool、read_file 和 bash。
 - 云商店成功空结果使用 `pagination:null`：适配为有效空列表，同时继续拒绝非空响应的异常结构。
 - CRM 对比曾漏详情链接：强化 skill 和系统输出约束，最终场景评估已核验真实详情链接。
 - harness 工作区移至 `.workspace/`，文件操作边界包含 skill 目录和运行目录；密钥位于边界外的 `.env`。
-- 推荐逻辑与客户端移入 `skills/marketplace-recommendation/scripts/`；主程序通过 `skill_loader.py` 加载并注册工具，
-  不再包含这两份业务实现。Skill 可独立复制、安装自身依赖并执行，源码与 wheel 两种加载方式均已验证。
+- 推荐逻辑与客户端保存在 `skills/marketplace-recommendation/scripts/`；已删除自定义 Skill loader、
+  商品函数注册和工具参数 schema。Agent 由 SDK 发现/读取 Skill，模型通过原生 bash 执行脚本。
+  主程序不导入 Skill 业务模块。独立命令 search 也使用同一个脚本入口。
+- paths.py 仅定位源码和 wheel 内的文件路径；TraceRail 仅观察 SDK 工具输出，为评估记录 JSON 证据。
 
 ## 已知范围
 
@@ -72,5 +77,6 @@ DeepSeek `deepseek-flash`、华为云商店实时搜索接口。SDK 通过锁定
 - 列表价格与试用标注不能替代完整规格报价；试用不必然免费，价格不能直接作为多人年度总价。
 - SDK 有可选 online training 模块缺少 redis 的警告及部分依赖弃用提示，未影响上述功能。
 - 本次测试验证基础行为，不覆盖生产并发容量、长会话稳定性或全站商品准确率。
+- 原生 bash 使用 SDK 本地执行模式，文件路径与可执行命令检查不等同于进程级隔离。
 
 密钥仅保存在本地忽略提交的 `.env` 中；检查未在源代码、测试证据或其他项目文件发现其明文副本。

@@ -5,7 +5,7 @@ import shutil
 import subprocess
 import sys
 
-from marketplace_agent.skill_loader import SKILL_DIR
+from marketplace_agent.paths import SKILL_DIR
 
 
 def test_copied_skill_recommends_without_host_or_sdk(tmp_path):
@@ -18,8 +18,9 @@ class NoHostImports(importlib.abc.MetaPathFinder):
         if fullname.split(".")[0] in {"marketplace_agent", "openjiuwen"}:
             raise ImportError("Skill must not import its host or SDK")
 sys.meta_path.insert(0, NoHostImports())
-sys.path.insert(0, sys.argv[1])
-from scripts import MarketplaceClient, recommend
+sys.path.insert(0, sys.argv[1] + "/scripts")
+from marketplace_client import MarketplaceClient
+from recommendation import recommend
 import httpx
 item = {"id":"portable", "title":"企业邮箱", "url":"/contents/portable",
         "delivery_code_cn":"SaaS", "price":100, "is_trial":1}

@@ -6,20 +6,15 @@ import json
 import os
 from pathlib import Path
 import sys
+import subprocess
 from uuid import uuid4
 
 from dotenv import load_dotenv
 
-from marketplace_agent.skill_loader import skill
+from marketplace_agent.paths import SKILL_SCRIPT
 
 
 async def run(args):
-    if args.command == "search":
-        result = await skill.recommend(skill.MarketplaceClient(), args.keyword, delivery=args.delivery,
-                                 max_price=args.max_price, trial_only=args.trial,
-                                 top_k=args.top_k, sort=args.sort)
-        print(json.dumps(result, ensure_ascii=False, indent=2) if args.json else skill.format_recommendations(result))
-        return 1 if result["status"] == "unavailable" else 0
     from marketplace_agent.runtime import configure_runtime
     configure_runtime()
     from marketplace_agent.agent import ask, create_agent
@@ -51,23 +46,18 @@ async def run(args):
 def main():
     load_dotenv(Path.cwd() / ".env")
     os.environ.setdefault("IS_SENSITIVE", "true")
+    if len(sys.argv) > 1 and sys.argv[1] == "search":
+        raise SystemExit(subprocess.run([sys.executable, str(SKILL_SCRIPT), *sys.argv[2:]]).returncode)
     parser = argparse.ArgumentParser(description="openJiuwen 华为云商店推荐助手")
     sub = parser.add_subparsers(dest="command", required=True)
     chat = sub.add_parser("chat", help="使用模型通过 harness 加载 skill，省略 query 进入多轮交互")
     chat.add_argument("query", nargs="?")
     chat.add_argument("--trace", action="store_true", help="输出工具调用及查询证据，不输出密钥")
-    search = sub.add_parser("search", help="无需模型的实时搜索与筛选，用于诊断和演示")
-    search.add_argument("keyword")
-    search.add_argument("--delivery", choices=["", *skill.DELIVERY_MODES], default="")
-    search.add_argument("--max-price", type=float)
-    search.add_argument("--trial", action="store_true")
-    search.add_argument("--top-k", type=int, default=3)
-    search.add_argument("--sort", choices=["relevance", "price_asc", "sales", "rating"], default="relevance")
-    search.add_argument("--json", action="store_true")
+    sub.add_parser("search", help="直接执行 Skill 脚本；search --help 查看脚本参数")
     args = parser.parse_args()
     try:
         code = asyncio.run(run(args))
-    except (ValueError, skill.MarketplaceError) as exc:
+    except ValueError as exc:
         print(str(exc), file=sys.stderr)
         code = 1
     except (KeyboardInterrupt, EOFError):

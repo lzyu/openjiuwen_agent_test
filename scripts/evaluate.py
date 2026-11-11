@@ -59,13 +59,14 @@ def validate(case, output, trace):
         if emitted_urls:
             errors.append("no-match answer includes a product")
     else:
+        if not any(e["event"] == "script_execution" and e["success"] and "recommendation.py" in e["command"] for e in trace):
+            errors.append("Skill script was not executed successfully by native bash")
         if not products or not emitted_urls:
             errors.append("no usable grounded recommendation")
     for result in results:
         filters = result.get("request", {}).get("filter", {})
         if case.get("delivery"):
-            from marketplace_agent.skill_loader import skill
-            if filters.get("content_mode") != skill.DELIVERY_MODES[case["delivery"]]:
+            if filters.get("content_mode") != {"SaaS": 5, "API": 7}[case["delivery"]]:
                 errors.append("delivery constraint was relaxed")
         if case.get("trial") and filters.get("is_trial") != 1:
             errors.append("trial constraint was relaxed")

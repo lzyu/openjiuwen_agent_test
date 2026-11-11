@@ -1,12 +1,14 @@
 """Exercise the real SDK loop and skill filesystem loading, without a paid LLM."""
 import json
+import shlex
+import sys
 
 from marketplace_agent.agent import ask, create_agent
 from marketplace_agent.runtime import configure_runtime
-from test_recommendation import client_for, raw_product
+from marketplace_agent.paths import SKILL_SCRIPT
 
 
-async def test_harness_loads_skill_then_calls_business_tool():
+async def test_harness_loads_skill_then_executes_script_with_native_bash():
     configure_runtime()
     from openjiuwen.core.foundation.llm import ModelClientConfig, ModelRequestConfig
     from openjiuwen.core.foundation.llm.schema.message import AssistantMessage
@@ -26,24 +28,27 @@ async def test_harness_loads_skill_then_calls_business_tool():
             self.calls += 1
             if self.calls <= 2:
                 name, arguments = ("skill_tool", {"skill_name": "marketplace-recommendation"}) if self.calls == 1 else (
-                    "recommend_products", {"keyword": "企业邮箱", "delivery": "SaaS", "trial_only": True})
+                    "bash", {"command": shlex.join([sys.executable, str(SKILL_SCRIPT), "--help"])})
                 return AssistantMessage(content="", tool_calls=[ToolCall(id=f"call-{self.calls}", type="function",
                                         name=name, arguments=json.dumps(arguments, ensure_ascii=False))])
-            return AssistantMessage(content="企业邮箱A，列表价180元/年，需核验人数规格。")
+            return AssistantMessage(content="已通过原生 bash 执行 Skill 脚本，脚本支持交付方式和最高价筛选。")
 
     model = ScriptedModel()
     trace = []
     await Runner.start()
     try:
-        agent = create_agent(client_for([raw_product()]), model=model, trace=trace)
+        agent = create_agent(model=model, trace=trace)
         result = await ask(agent, "推荐支持试用的SaaS企业邮箱")
         assert result["result_type"] == "answer"
-        assert "企业邮箱A" in result["output"]
+        assert "原生 bash" in result["output"]
         assert any(e["event"] == "skill_loaded" for e in trace)
-        recommendations = [e["result"] for e in trace if e["event"] == "recommendation"]
-        assert recommendations[0]["products"][0]["id"] == "email-1"
+        executions = [e for e in trace if e["event"] == "script_execution"]
+        assert executions and executions[0]["success"]
+        assert str(SKILL_SCRIPT) in executions[0]["command"]
+        assert "--delivery" in executions[0]["content"]
+        assert "--max-price" in model.messages[2]
         assert "# 华为云商店商品推荐" in model.messages[1]
         tool_names = {c.name for c in agent.ability_manager.list()}
-        assert tool_names == {"skill_tool", "recommend_products"}
+        assert tool_names == {"skill_tool", "read_file", "bash"}
     finally:
         await Runner.stop()

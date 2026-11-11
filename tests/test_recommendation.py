@@ -3,13 +3,8 @@ import json
 import httpx
 import pytest
 
-from marketplace_agent.skill_loader import skill
-
-MarketplaceClient = skill.MarketplaceClient
-MarketplaceError = skill.MarketplaceError
-Product = skill.Product
-plain_text = skill.plain_text
-recommend = skill.recommend
+from marketplace_client import MarketplaceClient, MarketplaceError, Product, plain_text
+from recommendation import recommend
 
 
 def raw_product(**changes):
