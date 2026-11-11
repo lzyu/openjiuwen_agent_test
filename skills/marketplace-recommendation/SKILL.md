@@ -42,5 +42,20 @@ description: 华为云商店商品搜索、推荐、对比和选型。用户描�
 - top_k：1–5。
 - 不同计费单位的价格不可直接推导总成本排名；低价只代表列表展示价。
 
-底层契约和来源记录见 `references/search-api.md`。推荐逻辑由项目的 `recommendation.py` 实现，
-通过 openJiuwen LocalFunction 注册；本文件由 harness SkillUseRail 发现并由 skill 工具加载。
+底层契约和来源记录见 `references/search-api.md`。
+推荐逻辑位于 `scripts/recommendation.py`，搜索客户端位于 `scripts/marketplace_client.py`；
+`scripts/__init__.py` 导出工具实现、说明和参数 schema，供宿主通过 openJiuwen LocalFunction 注册。
+本文件由 harness SkillUseRail 发现并由 skill 工具加载。
+
+## 独立运行与迁移
+
+完整复制本 skill 目录即可迁移推荐逻辑，不依赖原项目或 openJiuwen SDK；需要 Python 3.11–3.13。
+在新环境安装 `requirements.txt` 后可直接运行（将路径替换为复制后的路径）：
+
+```bash
+python -m pip install -r skills/marketplace-recommendation/requirements.txt
+python skills/marketplace-recommendation/scripts/recommendation.py 企业邮箱 --delivery SaaS --trial --max-price 500 --json
+```
+
+该命令直接执行 skill 自带的搜索和推荐工具，无需模型密钥。接入 Agent 时，宿主负责发现/加载本 skill，
+以及把 `scripts` 导出的 `recommend` 和工具 schema 注册到自身工具系统；业务实现保留在本目录。

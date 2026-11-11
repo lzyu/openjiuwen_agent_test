@@ -3,7 +3,10 @@ from __future__ import annotations
 
 import re
 
-from marketplace_agent.client import MarketplaceClient, MarketplaceError
+if __package__:
+    from .marketplace_client import DELIVERY_MODES, MarketplaceClient, MarketplaceError
+else:
+    from marketplace_client import DELIVERY_MODES, MarketplaceClient, MarketplaceError
 
 PRICE_NOTE = "价格是云商店搜索列表展示价，可能按用户、次数、资源或规格计费；不能据此保证整套方案或多人总预算。最终以详情页规格和商家报价为准。"
 
@@ -76,3 +79,32 @@ def format_recommendations(result: dict) -> str:
             f"   推荐依据：{'；'.join(product['reasons'])}", f"   {product['url']}",
         ])
     return "\n".join([*lines, result["price_note"]])
+
+
+def main():
+    """Run directly after copying the skill directory, without the Agent application."""
+    import argparse
+    import asyncio
+    import json
+
+    parser = argparse.ArgumentParser(description="华为云商店推荐 Skill（无需模型密钥）")
+    parser.add_argument("keyword")
+    parser.add_argument("--delivery", choices=["", *DELIVERY_MODES], default="")
+    parser.add_argument("--max-price", type=float)
+    parser.add_argument("--trial", action="store_true")
+    parser.add_argument("--top-k", type=int, default=3)
+    parser.add_argument("--sort", choices=["relevance", "price_asc", "sales", "rating"], default="relevance")
+    parser.add_argument("--json", action="store_true")
+    args = parser.parse_args()
+    try:
+        result = asyncio.run(recommend(MarketplaceClient(), args.keyword, delivery=args.delivery,
+                                      max_price=args.max_price, trial_only=args.trial,
+                                      top_k=args.top_k, sort=args.sort))
+    except ValueError as exc:
+        parser.error(str(exc))
+    print(json.dumps(result, ensure_ascii=False, indent=2) if args.json else format_recommendations(result))
+    return 1 if result["status"] == "unavailable" else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

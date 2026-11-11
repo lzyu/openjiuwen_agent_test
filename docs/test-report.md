@@ -9,14 +9,17 @@ DeepSeek `deepseek-flash`、华为云商店实时搜索接口。SDK 通过锁定
 
 | 层次 | 执行方式 | 结果 |
 | --- | --- | --- |
-| 确定性测试与真实搜索接口 | `RUN_LIVE=1 uv run --locked pytest -q` | 20 项通过；真实模型用例默认跳过 |
+| 确定性测试与真实搜索接口 | `RUN_LIVE=1 uv run --locked pytest -q` | 22 项通过；真实模型用例默认跳过 |
 | 真实模型场景评估 | `uv run --locked python scripts/evaluate.py` | 6 / 6 场景通过 |
 | 真实模型多轮测试 | `RUN_LLM=1 uv run --locked pytest tests/test_conversation.py -q` | 1 项通过（两轮实际对话） |
-| 可分发构建 | `uv build` | wheel 和源码包生成成功，包含 SKILL.md 及接口参考 |
+| 可分发构建 | `uv build` | wheel 和源码包包含完整 Skill 脚本；解包后加载及推荐调用通过 |
+| 独立 Skill 命令 | `uv run python skills/marketplace-recommendation/scripts/recommendation.py 企业邮箱 --delivery SaaS --trial --max-price 500 --json` | 真实搜索返回符合条件的商品 |
 
 确定性测试覆盖：harness 内实际加载 skill 正文并调用业务工具、工具暴露范围、
 价格/试用/交付硬条件二次校验、去重、弱相关兜底剔除、免费价0、HTML单位解析、
 异常业务码、接口结构变化、零结果 `pagination:null`、503 重试、不可信详情链接及无效预算。
+迁移后新增可移植性测试：复制 Skill 后，在禁止导入宿主和 openJiuwen 的独立进程中调用推荐工具，
+以及从其他工作目录运行 Skill 自带命令。推荐实现、搜索适配、工具 schema 和依赖均随 Skill 分发。
 
 ## 真实对话场景
 
@@ -59,6 +62,8 @@ DeepSeek `deepseek-flash`、华为云商店实时搜索接口。SDK 通过锁定
 - 云商店成功空结果使用 `pagination:null`：适配为有效空列表，同时继续拒绝非空响应的异常结构。
 - CRM 对比曾漏详情链接：强化 skill 和系统输出约束，最终场景评估已核验真实详情链接。
 - harness 工作区移至 `.workspace/`，文件操作边界包含 skill 目录和运行目录；密钥位于边界外的 `.env`。
+- 推荐逻辑与客户端移入 `skills/marketplace-recommendation/scripts/`；主程序通过 `skill_loader.py` 加载并注册工具，
+  不再包含这两份业务实现。Skill 可独立复制、安装自身依赖并执行，源码与 wheel 两种加载方式均已验证。
 
 ## 已知范围
 

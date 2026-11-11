@@ -6,13 +6,7 @@ import os
 from pathlib import Path
 from uuid import uuid4
 
-from marketplace_agent.client import DELIVERY_MODES, MarketplaceClient
-from marketplace_agent.recommendation import recommend
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-SKILLS_ROOT = PROJECT_ROOT / "skills"
-if not SKILLS_ROOT.is_dir():
-    SKILLS_ROOT = Path(__file__).parent / "bundled_skills"
+from marketplace_agent.skill_loader import SKILLS_ROOT, skill
 
 SYSTEM_PROMPT = """你是华为云商店商品选型助手，使用中文，回答简洁。
 处理推荐、搜索或对比诉求前，必须先调用 skill_tool 加载 marketplace-recommendation，遵守其流程。
@@ -23,7 +17,7 @@ SYSTEM_PROMPT = """你是华为云商店商品选型助手，使用中文，回�
 不进行下单或支付。\n"""
 
 
-def create_agent(client: MarketplaceClient | None = None, *, model=None, trace: list | None = None):
+def create_agent(client: skill.MarketplaceClient | None = None, *, model=None, trace: list | None = None):
     # Lazy imports keep the direct search command light and independent of model configuration.
     from openjiuwen.core.foundation.llm import Model, ModelClientConfig, ModelRequestConfig
     from openjiuwen.core.foundation.tool import LocalFunction, ToolCard
@@ -34,7 +28,7 @@ def create_agent(client: MarketplaceClient | None = None, *, model=None, trace: 
     from openjiuwen.harness import create_deep_agent
     from openjiuwen.harness.rails.skills.skill_use_rail import SkillUseRail
 
-    client = client or MarketplaceClient()
+    client = client or skill.MarketplaceClient()
     if model is None:
         api_key = os.getenv("API_KEY") or os.getenv("DEEPSEEK_API_KEY")
         if not api_key:
@@ -56,7 +50,7 @@ def create_agent(client: MarketplaceClient | None = None, *, model=None, trace: 
         if not skill_loaded:
             return {"status": "skill_required", "message": "请先成功加载 marketplace-recommendation skill", "products": []}
         try:
-            result = await recommend(client, keyword, delivery=delivery, max_price=max_price,
+            result = await skill.recommend(client, keyword, delivery=delivery, max_price=max_price,
                                      trial_only=trial_only, top_k=top_k, sort=sort)
         except ValueError as exc:
             result = {"status": "invalid_request", "message": str(exc), "products": []}
@@ -66,17 +60,8 @@ def create_agent(client: MarketplaceClient | None = None, *, model=None, trace: 
 
     tool = LocalFunction(card=ToolCard(
         id=f"marketplace-search-{uuid4().hex}", name="recommend_products",
-        description="实时搜索华为云商店，校验相关性和硬条件，返回有来源的推荐候选。使用前先加载 marketplace-recommendation skill。价格是列表展示价，不是整套预算。",
-        input_params={
-            "type": "object", "properties": {
-                "keyword": {"type": "string", "description": "核心检索词，例如 企业邮箱、CRM、发票、WAF；不要整句自然语言"},
-                "delivery": {"type": "string", "enum": ["", *DELIVERY_MODES], "default": ""},
-                "max_price": {"type": ["number", "null"], "minimum": 0, "description": "最高列表展示价（元），不能保证多人/全年/整套方案总预算"},
-                "trial_only": {"type": "boolean", "default": False},
-                "top_k": {"type": "integer", "minimum": 1, "maximum": 5, "default": 3},
-                "sort": {"type": "string", "enum": ["relevance", "price_asc", "sales", "rating"], "default": "relevance"},
-            }, "required": ["keyword"], "additionalProperties": False,
-        }), func=recommend_products)
+        description=skill.TOOL_DESCRIPTION, input_params=skill.TOOL_INPUT_PARAMS,
+    ), func=recommend_products)
 
     class TraceRail(AgentRail):
         async def before_invoke(self, ctx):

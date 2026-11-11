@@ -64,8 +64,8 @@ def validate(case, output, trace):
     for result in results:
         filters = result.get("request", {}).get("filter", {})
         if case.get("delivery"):
-            from marketplace_agent.client import DELIVERY_MODES
-            if filters.get("content_mode") != DELIVERY_MODES[case["delivery"]]:
+            from marketplace_agent.skill_loader import skill
+            if filters.get("content_mode") != skill.DELIVERY_MODES[case["delivery"]]:
                 errors.append("delivery constraint was relaxed")
         if case.get("trial") and filters.get("is_trial") != 1:
             errors.append("trial constraint was relaxed")

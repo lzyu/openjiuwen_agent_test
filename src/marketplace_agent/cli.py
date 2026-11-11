@@ -10,16 +10,15 @@ from uuid import uuid4
 
 from dotenv import load_dotenv
 
-from marketplace_agent.client import DELIVERY_MODES, MarketplaceClient, MarketplaceError
-from marketplace_agent.recommendation import format_recommendations, recommend
+from marketplace_agent.skill_loader import skill
 
 
 async def run(args):
     if args.command == "search":
-        result = await recommend(MarketplaceClient(), args.keyword, delivery=args.delivery,
+        result = await skill.recommend(skill.MarketplaceClient(), args.keyword, delivery=args.delivery,
                                  max_price=args.max_price, trial_only=args.trial,
                                  top_k=args.top_k, sort=args.sort)
-        print(json.dumps(result, ensure_ascii=False, indent=2) if args.json else format_recommendations(result))
+        print(json.dumps(result, ensure_ascii=False, indent=2) if args.json else skill.format_recommendations(result))
         return 1 if result["status"] == "unavailable" else 0
     from marketplace_agent.runtime import configure_runtime
     configure_runtime()
@@ -59,7 +58,7 @@ def main():
     chat.add_argument("--trace", action="store_true", help="输出工具调用及查询证据，不输出密钥")
     search = sub.add_parser("search", help="无需模型的实时搜索与筛选，用于诊断和演示")
     search.add_argument("keyword")
-    search.add_argument("--delivery", choices=["", *DELIVERY_MODES], default="")
+    search.add_argument("--delivery", choices=["", *skill.DELIVERY_MODES], default="")
     search.add_argument("--max-price", type=float)
     search.add_argument("--trial", action="store_true")
     search.add_argument("--top-k", type=int, default=3)
@@ -68,7 +67,7 @@ def main():
     args = parser.parse_args()
     try:
         code = asyncio.run(run(args))
-    except (ValueError, MarketplaceError) as exc:
+    except (ValueError, skill.MarketplaceError) as exc:
         print(str(exc), file=sys.stderr)
         code = 1
     except (KeyboardInterrupt, EOFError):

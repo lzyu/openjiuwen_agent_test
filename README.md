@@ -57,12 +57,23 @@ uv run marketplace-agent search 发票 --delivery API --json
 | `skills/marketplace-recommendation/SKILL.md` | 推荐、追问、比较、无结果与价格口径的业务规则 |
 | `skills/marketplace-recommendation/references/search-api.md` | 从前端脚本确认的接口契约与来源 |
 | `src/marketplace_agent/agent.py` | 创建 harness、装载 SkillUseRail、注册工具和调用追踪 |
-| `src/marketplace_agent/client.py` | 异步 HTTP、有限重试、字段与 HTML 归一化、详情链接校验 |
-| `src/marketplace_agent/recommendation.py` | skill 所用工具的条件校验、去重、排序、推荐证据 |
+| `src/marketplace_agent/skill_loader.py` | 从源码目录或安装包加载 Skill 自带的 Python 工具 |
+| `skills/marketplace-recommendation/scripts/marketplace_client.py` | 异步 HTTP、有限重试、字段与 HTML 归一化、详情链接校验 |
+| `skills/marketplace-recommendation/scripts/recommendation.py` | 条件校验、去重、排序、推荐证据与独立命令入口 |
+| `skills/marketplace-recommendation/scripts/__init__.py` | 导出工具实现、说明和参数 schema，不依赖宿主或 SDK |
 | `scripts/evaluate.py` | 真实模型和真实搜索接口的场景评估，写入可复查报告 |
 
 SDK 固定到 `4836fc2815b897bf022e36d5df22481fb446047d`，依赖固定在 `uv.lock`，避免 develop 分支漂移。
 项目不修改上游 SDK。构建 wheel 时会把 skill 一起打包。
+
+推荐逻辑、搜索适配、工具 schema 和依赖声明都位于 Skill 内。复制
+`skills/marketplace-recommendation/` 到其他项目并安装其中的 `requirements.txt` 后，即可独立使用：
+
+```bash
+python skills/marketplace-recommendation/scripts/recommendation.py 企业邮箱 --delivery SaaS --trial --max-price 500 --json
+```
+
+主程序仅负责加载 Skill、模型与 harness 配置、工具注册和交互。
 
 ## 测试
 

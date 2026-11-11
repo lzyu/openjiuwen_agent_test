@@ -17,7 +17,7 @@ Referer: https://marketplace.huaweicloud.com/search/
 ```
 
 `sort` 可用 `priceAsc`、`priceDesc`、`salesRankDesc`、`customerRatingDesc` 等。
-`content_mode`: 镜像1、人工服务4、SaaS5、API7、License8、硬件9；其余映射见 client.py。
+`content_mode`: 镜像1、人工服务4、SaaS5、API7、License8、硬件9；其余映射见 `../scripts/marketplace_client.py`。
 
 响应成功码为字符串 `00000000`；列表位于 `pagination.items`，总数为 `total`。
 成功但无结果时 `total=0` 且 `pagination=null`，应作为有效空列表处理。
